@@ -1,0 +1,220 @@
+import { Table } from "antd";
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import Breadcrumbs from "../../../components/Breadcrumbs";
+import AddPageManager from "../../../components/modelpopup/AddPageManager";
+import DeleteModal from "../../../components/modelpopup/DeleteModal";
+
+const PageManager = () => {
+  const [users, setUsers] = useState([]);
+
+  // Dummy data
+  useEffect(() => {
+    const dummyData = [
+      {
+        id: 1,
+        PageName: "Facebook",
+        PageID:"1",
+        Sections: "11",
+        Contents: "some",
+         Image: "https://via.placeholder.com/50",
+        status: "Unpublish",
+      },
+      {
+        id: 2,
+        PageName: "Twitter",
+        PageID:"2",
+        Sections: "11",
+        Contents: "some",
+         Image: "https://via.placeholder.com/50",
+        status: "Publish",
+      },
+      {
+        id: 3,
+        PageName: "LinkedIn",
+        PageID:"3",
+        Sections: "11",
+          Contents: "some",
+           Image: "https://via.placeholder.com/50",
+        status: "Unpublish",
+      },
+      {
+        id: 4,
+        PageName: "Instagram",   
+        PageID:"4",       
+        Sections: "11",
+          Contents: "some",
+           Image: "https://via.placeholder.com/50",
+        status: "Publish",
+      },
+    ];
+    setUsers(dummyData);
+  }, []);
+
+  // Handle status change (Publish/Unpublish)
+  const handleStatusChange = (id, newStatus) => {
+    const updatedUsers = users.map((user) =>
+      user.id === id ? { ...user, status: newStatus } : user
+    );
+    setUsers(updatedUsers);
+  };
+
+  const userElements = users.map((user, index) => ({
+    key: index,
+    id: user.id,
+    PageName: user.PageName,
+    PageID: user.PageID, 
+    Sections: user.Sections, 
+    Contents: user.Contents, 
+    Image: user.Image,
+    status: user.status,
+  }));
+
+  const columns = [
+    {
+      title: "#",
+      dataIndex: "id",
+      render: (text) => <span>{text}</span>,
+      sorter: (a, b) => a.id - b.id,
+    },
+    {
+      title: "PageName  ",
+      dataIndex: "PageName",
+      render: (text) => <span>{text}</span>,
+      sorter: (a, b) => a.PageName.localeCompare(b.PageName),
+    },
+    {
+      title: "PageID",
+      dataIndex: "PageID",
+      render: (text) => <span>{text}</span>,
+    },
+    {
+      title: "Sections",
+      dataIndex: "Sections",
+      render: (text) => <span>{text}</span>,
+    },
+    {
+      title: "Contents",
+      dataIndex: "Contents",
+      render: (text) => <span>{text}</span>,
+    },
+    {
+        title: "Image",
+        dataIndex: "Image",
+        render: (text) => <img src={text} alt="statement" style={{ width: "50px" }} />,
+      },
+    
+    
+    {
+      title: "Status",
+      dataIndex: "status",
+      render: (text, record) => (
+        <div className="dropdown action-label">
+          <Link
+            className="btn btn-white btn-sm btn-rounded dropdown-toggle"
+            to="#"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+            <i
+              className={
+                text === "Unpublish"
+                  ? "far fa-dot-circle text-danger"
+                  : "far fa-dot-circle text-success"
+              }
+            />{" "}
+            {text}
+          </Link>
+          <div className="dropdown-menu">
+            <Link
+              className="dropdown-item"
+              to="#"
+              onClick={() => handleStatusChange(record.id, "Publish")}
+            >
+              <i className="far fa-dot-circle text-success" /> Publish
+            </Link>
+            <Link
+              className="dropdown-item"
+              to="#"
+              onClick={() => handleStatusChange(record.id, "Unpublish")}
+            >
+              <i className="far fa-dot-circle text-danger" /> Unpublish
+            </Link>
+          </div>
+        </div>
+      ),
+    },
+    {
+      title: "Action",
+      render: (_, record) => (
+        <div className="action-icons">
+
+          <Link
+            to="#"
+            className="action-icon"
+            data-bs-toggle="modal"
+            data-bs-target="#edit_calenderyear"
+            title="Create"
+          >
+            <i className="fa fa-plus-circle m-r-5" style={{ color: "#5efc88", fontSize: "13px" }}></i>
+          </Link>
+          <Link to="#" className="action-icon" title="View">
+            <i className="fa fa-eye m-r-5 m-lg-4" style={{ color: "#FF902F", fontSize: "13px" }}></i>
+          </Link>
+         
+          
+          <Link
+            to="#"
+            className="action-icon"
+            data-bs-toggle="modal"
+            data-bs-target="#edit_calenderyear"
+            title="Edit"
+          >
+            <i className="fa fa-pencil m-r-5 m-lg-4" style={{ color: "blue", fontSize: "13px" }}></i>
+          </Link>
+          <Link
+            to="#"
+            className="action-icon"
+            data-bs-toggle="modal"
+            data-bs-target="#edit_calenderyear"
+            title="Delete"
+          >
+            <i className="fa fa-trash m-r-5 m-lg-4" style={{ color: "red", fontSize: "13px" }}></i>
+          </Link>
+        </div>
+      ),
+    },
+  ];
+
+  return (
+    <div className="page-wrapper">
+      <div className="content container-fluid">
+        <Breadcrumbs
+          maintitle="PageManager"
+          title=" Page Maker"
+          subtitle="Page Manager"
+          modal="#add_PageManager"
+          name="PageManager"
+          Linkname="/AddPageManager"
+        />
+
+        <div className="row">
+          <div className="col-md-12">
+            <div className="table-responsive">
+              <Table
+                columns={columns}
+                dataSource={userElements}
+                className="table-striped"
+                rowKey={(record) => record.id}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+      <AddPageManager />
+      <DeleteModal Name="Delete Social Record" />
+    </div>
+  );
+};
+
+export default PageManager;
